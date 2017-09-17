@@ -5,7 +5,7 @@ permalink: /flutter-for-android/
 ---
 This document is meant for Android developers looking to transfer their existing Android knowledge to build mobile apps in Flutter. If you understand the fundamentals of the Android framework then you can use this document as a jump start to Flutter development.
 
-You can use this document as a cookbook by jumping around and finding questions that are most relevant to your need. 
+This document can be used as a cookbook by jumping around and finding questions that are most relevant to your needs.
 
 # Views
 
@@ -31,13 +31,13 @@ If you are in doubt, then always remember this rule: If a widget changes—the u
 
 Let's take a look at how you would use a StatelessWidget. A common StatelessWidget is a Text widget. If you look at the implemtnation of the Text Widget you'll find it subclasses a StatelessWidget
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 new Text(
   'I like Flutter!',
   style: new TextStyle(fontWeight: FontWeight.bold),
 );
-```
-<!-- skip -->
+{% endprettify %}
 
 As you can see, the Text Widget has no state information associated with it, it renders what is passed in it's constructors and nothing more. 
 
@@ -47,7 +47,8 @@ This can be acheived by wrapping the Text widget in a StatefulWidget and updatin
 
 For example:
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 import 'package:flutter/material.dart';
 
 void main() {
@@ -100,9 +101,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     );
   }
 }
-```
-<!-- skip -->
-
+{% endprettify %}
 
 
 **How do I layout my Widgets? Where is my XML layout file?**
@@ -111,7 +110,8 @@ In Android, you write layouts via XML, however in Flutter you write your layouts
 
 Here is an example of how you would display a simple Widget on the screen and add some padding to it.
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 @override
 Widget build(BuildContext context) {
   return new Scaffold(
@@ -127,9 +127,7 @@ Widget build(BuildContext context) {
     ),
   );
 }
-```
-<!-- skip -->
-
+{% endprettify %}
 
 
 **How do I add or remove a component from my layout?**
@@ -138,7 +136,8 @@ In Android, you would call addChild or removeChild from a parent to dynamically 
 
 For example here is how you can toggle between two widgets when you click on a FloatingActionButton
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 import 'package:flutter/material.dart';
 
 void main() {
@@ -200,17 +199,83 @@ class _SampleAppPageState extends State<SampleAppPage> {
     );
   }
 }
-```
-<!-- skip -->
-
+{% endprettify %}
 
 
 **In Android, I can Animate a view by View.animate(), how can I do that to a Widget?**
-In Flutter, animating widgets can be done easily via the animation library. See https://flutter.io/widgets/animation/
+In Flutter, animating widgets can be done easily via the animation library.
 
-Let's take a look at how to write a FadeTransition
+In Android you would either create animations via XML or call the .animate() property on Views, in Flutter you can just wrap widgets inside an Animation.
 
-[code]
+Similar to Android, in Flutter you have an AnimationController and a Interpolator which is an extension of the Animation class, for example a CurvedAnimation. You pass the controller and Animation into an AnimationWidget and tell the controller to start the animation.
+
+Let's take a look at how to write a FadeTransition that will Fade in a logo when you press
+
+<!-- skip -->
+{% prettify dart %}
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(new FadeAppTest());
+}
+
+class FadeAppTest extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'Fade Demo',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: new MyFadeTest(title: 'Fade Demo'),
+    );
+  }
+}
+
+class MyFadeTest extends StatefulWidget {
+  MyFadeTest({Key key, this.title}) : super(key: key);
+  final String title;
+  @override
+  _MyFadeTest createState() => new _MyFadeTest();
+}
+
+class _MyFadeTest extends State<MyFadeTest> with TickerProviderStateMixin {
+  AnimationController controller;
+  CurvedAnimation curve;
+
+  @override
+  void initState() {
+    controller = new AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+    curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(widget.title),
+      ),
+      body: new Center(
+          child: new Container(
+              child: new FadeTransition(
+                  opacity: curve,
+                  child: new FlutterLogo(
+                    size: 100.0,
+                  )))),
+      floatingActionButton: new FloatingActionButton(
+        tooltip: 'Fade',
+        child: new Icon(Icons.brush),
+        onPressed: () {
+          controller.forward();
+        },
+      ),
+    );
+  }
+}
+{% endprettify %}
+
+ See https://flutter.io/widgets/animation/ and https://flutter.io/tutorials/animation for more specific details.
 
 
 
@@ -218,11 +283,34 @@ Let's take a look at how to write a FadeTransition
 
 Building custom widgets in Flutter is as simple as extending a Widget and adding your custom logic. This is like Android where you would extend a View and override the methods to customize it.
 
-Let's take a look at how to build a custom button
+Let's take a look at how to build a CustomButton that takes in the label in the constructor and displays it
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+class CustomButton extends StatelessWidget {
+  final String label;
+  CustomButton(this.label);
 
+  @override
+  Widget build(BuildContext context) {
+    return new RaisedButton(onPressed: (){
 
+    }, child: new Text(label));
+  }
+}
+{% endprettify %}
+
+Then you can use this CustomButton just like you would with any other Widget
+
+<!-- skip -->
+{% prettify dart %}
+@override
+Widget build(BuildContext context) {
+  return  new Center(
+        child: new CustomButton("Hello"),
+  );
+}
+{% endprettify %}
 
 # Intents
 
@@ -230,15 +318,29 @@ Let's take a look at how to build a custom button
 
 Flutter does not have the concept of Intents. However in Android, there are two main use-cases for Intents, One is to switch between Activities and another is to invoke external(or internal) components of your app (Camera, Services etc).
 
-To switch between screens in Flutter you can directly access the router to draw a new Widget.
+To switch between screens in Flutter you can directly access the router to draw a new Widget.  There are two core concepts and classes for managing multiple screens: Route and Navigator. A Route is an abstraction for a “screen” or “page” of an app (think Activity), and a Navigator is a widget that manages routes. A Navigator can push and pop routes to help a user move from screen to screen.
 
-[code]
+Similar to Android where you can declare your Activities inside the AndroidManifest.xml, in Flutter you can pass in a Map of named routes to the top level MaterialApp instance
 
-Now in Android, you can pass some data along with the Intent, while the Navigation router does not have a way to pass data directly, you can approach this problem by creating a static “data” class that you can store and retrieve values when switching screens. 
+<!-- skip -->
+{% prettify dart %}
+ void main() {
+  runApp(new MaterialApp(
+    home: new MyAppHome(), // becomes the route named '/'
+    routes: <String, WidgetBuilder> {
+      '/a': (BuildContext context) => new MyPage(title: 'page A'),
+      '/b': (BuildContext context) => new MyPage(title: 'page B'),
+      '/c': (BuildContext context) => new MyPage(title: 'page C'),
+    },
+  ));
+}
+{% endprettify %}
+Then you can change to this route by getting an hold of the Navigator and calling this named route.
 
-There is also a very popular Router called “Fluro” that adds this functionality for you.
-
-[code]
+<!-- skip -->
+{% prettify dart %}
+Navigator.of(context).pushNamed('/b');
+{% endprettify %}
 
 The other popular use-case for Intents is to call external components such as a Camera or File picker. For this, you would need to create a native platform integration (or use an existing library)
 
@@ -268,11 +370,88 @@ Because of Flutters reactive architecture, there is no need to worry about if yo
 
 For example, when making long running calls you should always follow the async/await pattern
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+loadData() async {
+  String dataURL = "https://jsonplaceholder.typicode.com/posts";
+  http.Response response = await http.get(dataURL);
+  setState(() {
+    widgets = JSON.decode(response.body);
+  });
+}
+{% endprettify %}
 
 To update the UI you would call setState which would trigger the build method to run again and update the data.
 
-[code]
+Here is the full example of loading data asyncrounsly and displaying it in a ListView.
+
+<!-- skip -->
+{% prettify dart %}
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+void main() {
+  runApp(new SampleApp());
+}
+
+class SampleApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'Sample App',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: new SampleAppPage(),
+    );
+  }
+}
+
+class SampleAppPage extends StatefulWidget {
+  SampleAppPage({Key key}) : super(key: key);
+
+  @override
+  _SampleAppPageState createState() => new _SampleAppPageState();
+}
+
+class _SampleAppPageState extends State<SampleAppPage> {
+  List widgets = new List();
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+        appBar: new AppBar(
+          title: new Text("Sample App"),
+        ),
+        body: new ListView.builder(
+            itemCount: widgets.length,
+            itemBuilder: (BuildContext context, int position) {
+              return getRow(position);
+            }));
+  }
+
+  Widget getRow(int i) {
+    return new Padding(padding: new EdgeInsets.all(10.0), child: new Text("Row ${widgets[i]["title"]}"));
+  }
+
+  loadData() async {
+    String dataURL = "https://jsonplaceholder.typicode.com/posts";
+    http.Response response = await http.get(dataURL);
+    setState(() {
+      widgets = JSON.decode(response.body);
+    });
+  }
+}
+{% endprettify %}
 
 
 
@@ -282,17 +461,24 @@ In many cases, you do not have to worry about threading in Flutter as long as yo
 
 To run code asynchronously you can declare the function as an async function and await on long running tasks in the function
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+loadData() async {
+  String dataURL = "https://jsonplaceholder.typicode.com/posts";
+  http.Response response = await http.get(dataURL);
+  setState(() {
+    widgets = JSON.decode(response.body);
+  });
+}
+{% endprettify %}
 
-This is where you would typically do network or database calls. 
+This is how you would typically do network or database calls. 
 
-With regards to AsyncTask which follows a three step model onPreExecute, doInBackground and onPostExecute, doing a similar model in Flutter is much simpler. You can just write non-blocking code as it is like you would in onPreExecute and onPostExecute and to run code asynchronously you would call an async function
-
-[code]
+With regards to AsyncTask which follows a three step model onPreExecute, doInBackground and onPostExecute, doing a similar model in Flutter is easier. You can just write non-blocking code as it is, like you would in onPreExecute and onPostExecute and to run code asynchronously you would call an async function.
 
 onPostExecute typically takes the value from the result of the doInBackground task and updates the UI, in Flutter as you can see above you would just take the value returned from the await’ed function and update the UI by calling setState.
 
-However, there are times where you may be processing a large amount of data and your UI will hang. 
+However, there are times where you may be processing a large amount of data and your UI could hang. 
 
 To get around this you can run code in the background. See <u>*How do I run parallel code on multi-core devices? I.e AsyncTask.execute(AsyncTask.THREAD_POOL_EXECUTOR) or run code in a background thread?*</u>
 
@@ -308,13 +494,178 @@ Isolates are a separate execution thread that runs and do not share any memory w
 
 Let's see an example of a simple Isolate and how you can communicate and share data back to the main thread to update your UI.
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+  loadData() async {
+    ReceivePort receivePort = new ReceivePort();
+    await Isolate.spawn(dataLoader, receivePort.sendPort);
 
-While it’s no golden rule, try to keep your Isolates to the number of CPU cores on the device as having too many will cause your execution to slow down. It is also preferred to use coarse-grained communications with Isolates.
+    // The 'echo' isolate sends it's SendPort as the first message
+    SendPort sendPort = await receivePort.first;
 
-For example:
+    List msg = await sendReceive(sendPort, "https://jsonplaceholder.typicode.com/posts");
 
-[code]
+    setState(() {
+      widgets = msg;
+    });
+  }
+
+// the entry point for the isolate
+  static dataLoader(SendPort sendPort) async {
+    // Open the ReceivePort for incoming messages.
+    ReceivePort port = new ReceivePort();
+
+    // Notify any other isolates what port this isolate listens to.
+    sendPort.send(port.sendPort);
+
+    await for (var msg in port) {
+      String data = msg[0];
+      SendPort replyTo = msg[1];
+
+      String dataURL = data;
+      http.Response response = await http.get(dataURL);
+      // Lots of JSON to parse
+      replyTo.send(JSON.decode(response.body));
+    }
+  }
+
+  Future sendReceive(SendPort port, msg) {
+    ReceivePort response = new ReceivePort();
+    port.send([msg, response.sendPort]);
+    return response.first;
+  }
+{% endprettify %}
+
+"dataLoader" is the Isolate that runs in its own seperte execution thread, where you can do more CPU intensive processing, for example parsing a lot of JSON - 10k+ lines, or doing computationally intensive math.
+
+A full example that you can run is below.
+
+<!-- skip -->
+{% prettify dart %}
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:isolate';
+
+void main() {
+  runApp(new SampleApp());
+}
+
+class SampleApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'Sample App',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: new SampleAppPage(),
+    );
+  }
+}
+
+class SampleAppPage extends StatefulWidget {
+  SampleAppPage({Key key}) : super(key: key);
+
+  @override
+  _SampleAppPageState createState() => new _SampleAppPageState();
+}
+
+class _SampleAppPageState extends State<SampleAppPage> {
+  List widgets = new List();
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  showLoadingDialog() {
+    if (widgets.length == 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  getBody() {
+    if (showLoadingDialog()) {
+      return getProgressDialog();
+    } else {
+      return getListView();
+    }
+  }
+
+  getProgressDialog() {
+    return new Center(child: new CircularProgressIndicator());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+        appBar: new AppBar(
+          title: new Text("Sample App"),
+        ),
+        body: getBody());
+  }
+
+  ListView getListView() => new ListView.builder(
+      itemCount: widgets.length,
+      itemBuilder: (BuildContext context, int position) {
+        return getRow(position);
+      });
+
+  Widget getRow(int i) {
+    return new Padding(padding: new EdgeInsets.all(10.0), child: new Text("Row ${widgets[i]["title"]}"));
+  }
+
+  loadData() async {
+    ReceivePort receivePort = new ReceivePort();
+    await Isolate.spawn(dataLoader, receivePort.sendPort);
+
+    // The 'echo' isolate sends it's SendPort as the first message
+    SendPort sendPort = await receivePort.first;
+
+    List msg = await sendReceive(sendPort, "https://jsonplaceholder.typicode.com/posts");
+
+    setState(() {
+      widgets = msg;
+    });
+  }
+
+// the entry point for the isolate
+  static dataLoader(SendPort sendPort) async {
+    // Open the ReceivePort for incoming messages.
+    ReceivePort port = new ReceivePort();
+
+    // Notify any other isolates what port this isolate listens to.
+    sendPort.send(port.sendPort);
+
+    await for (var msg in port) {
+      String data = msg[0];
+      SendPort replyTo = msg[1];
+
+      String dataURL = data;
+      http.Response response = await http.get(dataURL);
+      // Lots of JSON to parse
+      replyTo.send(JSON.decode(response.body));
+    }
+  }
+
+  Future sendReceive(SendPort port, msg) {
+    ReceivePort response = new ReceivePort();
+    port.send([msg, response.sendPort]);
+    return response.first;
+  }
+
+}
+
+
+{% endprettify %}
+
+While it’s no golden rule, try to keep your Isolates to the number of CPU cores on the device as having too many will cause your execution to slow down.
 
 **What is the equivalent of OkHttp on Flutter?**
 
@@ -322,23 +673,128 @@ Making a network call in Flutter is very easy when you use the popular "http" pa
 
 You can use it by adding it to your dependencies in pubspec.yaml
 
-[code]
+<!-- skip -->
+{% prettify yaml %}
+dependencies:
+  ...
+  http: '>=0.11.3+12'
+{% endprettify %}
 
 Then to make a network call, for example to this JSON GIST on GitHub you can call
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+import 'dart:convert';
 
-Once you have the result you can tell Flutter to update its state by calling setState like so
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+[...]
+  loadData() async {
+    String dataURL = "https://jsonplaceholder.typicode.com/posts";
+    http.Response response = await http.get(dataURL);
+    setState(() {
+      widgets = JSON.decode(response.body);
+    });
+  }
+}
+{% endprettify %}
 
-[code]
-
-Which will update your UI with the result from your network call.
+Once you have the result you can tell Flutter to update its state by calling setState, which will update your UI with the result from your network call.
 
 **How do I show progress indicator on android when there is a task that is running?**
 
-Before you call your long running task, you can show a Indicator to let the user know there is processing happening. This can be done by rendering a Dialog widget. You can show the Dialog programmatically by controlling it's rendering through a boolean and telling Flutter to update it's state just before your long running task.
+Before you call your long running task, you can show a Indicator to let the user know there is processing happening. This can be done by rendering a Progress Indicator widget. You can show the Progress Indicator programmatically by controlling when its rendered through a boolean and telling Flutter to update it's state just before your long running task.
 
-[code]
+In the example below, we break up the build function into three different functions. If showLoadingDialog is true (when widgets.length == 0) then we render the ProgressIndicator, else we render the ListView with all the data.
+
+<!-- skip -->
+{% prettify dart %}
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+void main() {
+  runApp(new SampleApp());
+}
+
+class SampleApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'Sample App',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: new SampleAppPage(),
+    );
+  }
+}
+
+class SampleAppPage extends StatefulWidget {
+  SampleAppPage({Key key}) : super(key: key);
+
+  @override
+  _SampleAppPageState createState() => new _SampleAppPageState();
+}
+
+class _SampleAppPageState extends State<SampleAppPage> {
+  List widgets = new List();
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  showLoadingDialog() {
+    if (widgets.length == 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  getBody() {
+    if (showLoadingDialog()) {
+      return getProgressDialog();
+    } else {
+      return getListView();
+    }
+  }
+
+  getProgressDialog() {
+    return new Center(child: new CircularProgressIndicator());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+        appBar: new AppBar(
+          title: new Text("Sample App"),
+        ),
+        body: getBody());
+  }
+
+  ListView getListView() => new ListView.builder(
+      itemCount: widgets.length,
+      itemBuilder: (BuildContext context, int position) {
+        return getRow(position);
+      });
+
+  Widget getRow(int i) {
+    return new Padding(padding: new EdgeInsets.all(10.0), child: new Text("Row ${widgets[i]["title"]}"));
+  }
+
+  loadData() async {
+    String dataURL = "https://jsonplaceholder.typicode.com/posts";
+    http.Response response = await http.get(dataURL);
+    setState(() {
+      widgets = JSON.decode(response.body);
+    });
+  }
+}
+{% endprettify %}
 
 # Project Structure & Resources
 
@@ -355,29 +811,47 @@ Create a folder called images and for each of your image files, generate a @2x a
 
 Then you would need to declare these images in your pubspec.yaml file
 
-[code]
+<!-- skip -->
+{% prettify yaml %}
+assets:
+ - images/a_dot_burr.jpeg
+ - images/a_dot_ham.jpeg
+{% endprettify %}
 
 You can then access your images using AssetImage
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+return new AssetImage("images/a_dot_burr.jpeg");
+{% endprettify %}
 
 **Where do I store strings? How do I store different locales**
 
-Currently, best practice is to create a class called Strings that is locale aware, for example
+Currently, best practice is to create a class called Strings, for example
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+class Strings{
+  static String welcomeMessage = "Welcome To Flutter";
+}
+{% endprettify %}
 
 Then in your code, you can access your Strings as such
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+ new Text(Strings.welcomeMessage)
+{% endprettify %}
+
+Flutter has basic support for accessibility on Android, though this feature is a work in progress.
+
+Flutter developers are encouraged to use the [intl package](https://pub.dartlang.org/packages/intl) for internationalization and localization.
 
 **What is the equivalent of a Gradle file to add my external dependencies?**
 
 While there are Gradle files under the Android folder, you would only use these if you are adding dependencies needed for platform integration. Otherwise, you can use pubspec.yaml to declare external dependencies.
 
 A good place to find great packages for flutter is pub.dartlang.org
-
-[code]
 
 # Activities and Fragments
 
@@ -429,13 +903,38 @@ In Flutter the easiest way to do this is using the ListView widget. This might s
 
 Typically you would want to add event listeners to your widgets, such as a button or image. In Flutter there are two easy ways of doing this.
 
-1. If the Widget has support for event detection you can just pass in a function to it and handle it. For example, the MaterialButton has an onPressed parameter
+1. If the Widget has support for event detection you can just pass in a function to it and handle it. For example, the RaisedButton has an onPressed parameter
 
-   ​  [code]
+   <!-- skip -->
+{% prettify dart %}
+   @override
+   Widget build(BuildContext context) {
+     return new RaisedButton(onPressed: () {
+       print("click");
+     }, child: new Text("Button"));
+   }
+   {% endprettify %}
 
 2. If the Widget does not have support for event detection, you can wrap up the widget in a GestureDetector and pass in a function to the onTap parameter.
 
-   ​  [code]
+   <!-- skip -->
+{% prettify dart %}
+     @override
+     Widget build(BuildContext context) {
+       return new Scaffold(
+           body: new Center(
+         child: new GestureDetector(
+           child: new FlutterLogo(
+             size: 200.0,
+           ),
+           onTap: () {
+             print("tap");
+           },
+         ),
+       ));
+     }
+   }
+   {% endprettify %}
 
 **How do I handle other gestures on widgets?**
 
@@ -468,8 +967,43 @@ Using the GuestureDetector we can listen to a wide range of Gestures such as
   - `onHorizontalDragUpdate` A pointer that is in contact with the screen and moving horizontally has moved in the horizontal direction.
   - `onHorizontalDragEnd` A pointer that was previously in contact with the screen and moving horizontally is no longer in contact with the screen and was moving at a specific velocity when it stopped contacting the screen.
 
-  [code]
 
+
+For example here is a GuesterDetector for double tap on the FlutterLogo that will make it rotate
+
+<!-- skip -->
+{% prettify dart %}
+AnimationController controller;
+CurvedAnimation curve;
+
+@override
+void initState() {
+  controller = new AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+  curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
+}
+
+@override
+Widget build(BuildContext context) {
+  return new Scaffold(
+      body: new Center(
+    child: new GestureDetector(
+      child: new RotationTransition(
+          turns: curve,
+          child: new FlutterLogo(
+            size: 200.0,
+          )),
+      onDoubleTap: () {
+        if(controller.isCompleted){
+          controller.reverse();
+        }else{
+          controller.forward();
+        }
+
+      },
+    ),
+  ));
+}
+{% endprettify %}
 
 # Listviews & Adapters
 
@@ -481,7 +1015,8 @@ Though the differences are great, the end result is the same. In an Android List
 
 In Flutter, due to Flutters immutable widget pattern, you simply pass in a List of Widgets to your ListView and Flutter will take care of making sure they are scrolling fast and smooth.
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 import 'package:flutter/material.dart';
 
 void main() {
@@ -528,14 +1063,14 @@ class _SampleAppPageState extends State<SampleAppPage> {
     return widgets;
   }
 }
-```
-<!-- skip -->
+{% endprettify %}
 
 **How do I know which list item is clicked on?**
 
 Unlike Android where a ListView offers an onItemClickListener, Flutter makes it a lot easier by letting you just use the touch handling that the widgets you passed in have.
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 import 'package:flutter/material.dart';
 
 void main() {
@@ -587,8 +1122,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     return widgets;
   }
 }
-```
-<!-- skip -->
+{% endprettify %}
 
 **How do I update ListView's dynamically?**
 
@@ -598,7 +1132,8 @@ This is because when setState is called, the Flutter rendering engine will go th
 
 The quick and dirty way around this is to assign your list variable a new List() inside of setState, copy over all the old data to the new list. This is inefficient a simple dirty way to acheive an update. 
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 import 'package:flutter/material.dart';
 
 void main() {
@@ -660,12 +1195,12 @@ class _SampleAppPageState extends State<SampleAppPage> {
     );
   }
 }
-```
-<!-- skip -->
+{% endprettify %}
 
 However the recommended, more efficent and effective way is to use a ListView.Builder
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 import 'package:flutter/material.dart';
 
 void main() {
@@ -729,8 +1264,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     );
   }
 }
-```
-<!-- skip -->
+{% endprettify %}
 
 Instead of creating a "new ListView" we create a new ListView.builder which takes two key paramters, the initial length of the list and an Itembuilder function.
 
@@ -748,18 +1282,19 @@ Customizing the Font of a Text widget is simple in Flutter, first you need to ta
 
 Next in your pubspec.yaml file you would declare the fonts
 
-```yaml
+<!-- skip -->
+{% prettify yaml %}
 fonts:
    - family: MyCustomFont
      fonts:
        - asset: fonts/MyCustomFont.ttf
        - style: italic
-```
-<!-- skip -->
+{% endprettify %}
 
 and lasty you would assign the font to your Text widget
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 @override
 Widget build(BuildContext context) {
   return new Scaffold(
@@ -774,8 +1309,7 @@ Widget build(BuildContext context) {
     ),
   );
 }
-```
-<!-- skip -->
+{% endprettify %}
 
 **How do I style my Text widgets?**
 
@@ -804,13 +1338,14 @@ The style parameter of a Text widget takes a TextStyle object, where you can cus
 
 In Flutter you can easily show a "hint" or a placeholder text for your input by adding an InputDecoration object to the decoration constructor parameter for the Text Widget
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 body: new Center(
   child: new TextField(
     decoration: new InputDecoration(hintText: "This is a hint"),
   )
 )
-```
+{% endprettify %}
 
 **How do I show validation errors?**
 
@@ -818,7 +1353,8 @@ Just like how you would with a "hint", you can pass in a InputDecoration object 
 
 However, you would not want to start off with showing an error and typically would want to show it when the user has entered some invalid data. This can be done by updating the state and passing in a new InputDecoration object.
 
-```dart
+<!-- skip -->
+{% prettify dart %}
 import 'package:flutter/material.dart';
 
 void main() {
@@ -885,9 +1421,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     return regExp.hasMatch(em);
   }
 }
-```
-<!-- skip -->
-
+{% endprettify %}
 
 
 # Flutter Plugins
