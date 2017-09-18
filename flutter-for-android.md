@@ -575,12 +575,12 @@ data back to the main thread to update your UI.
   loadData() async {
     ReceivePort receivePort = new ReceivePort();
     await Isolate.spawn(dataLoader, receivePort.sendPort);
-
+    
     // The 'echo' isolate sends it's SendPort as the first message
     SendPort sendPort = await receivePort.first;
-
+    
     List msg = await sendReceive(sendPort, "https://jsonplaceholder.typicode.com/posts");
-
+    
     setState(() {
       widgets = msg;
     });
@@ -590,14 +590,14 @@ data back to the main thread to update your UI.
   static dataLoader(SendPort sendPort) async {
     // Open the ReceivePort for incoming messages.
     ReceivePort port = new ReceivePort();
-
+    
     // Notify any other isolates what port this isolate listens to.
     sendPort.send(port.sendPort);
-
+    
     await for (var msg in port) {
       String data = msg[0];
       SendPort replyTo = msg[1];
-
+    
       String dataURL = data;
       http.Response response = await http.get(dataURL);
       // Lots of JSON to parse
@@ -664,7 +664,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     if (widgets.length == 0) {
       return true;
     }
-
+    
     return false;
   }
 
@@ -702,12 +702,12 @@ class _SampleAppPageState extends State<SampleAppPage> {
   loadData() async {
     ReceivePort receivePort = new ReceivePort();
     await Isolate.spawn(dataLoader, receivePort.sendPort);
-
+    
     // The 'echo' isolate sends it's SendPort as the first message
     SendPort sendPort = await receivePort.first;
-
+    
     List msg = await sendReceive(sendPort, "https://jsonplaceholder.typicode.com/posts");
-
+    
     setState(() {
       widgets = msg;
     });
@@ -717,14 +717,14 @@ class _SampleAppPageState extends State<SampleAppPage> {
   static dataLoader(SendPort sendPort) async {
     // Open the ReceivePort for incoming messages.
     ReceivePort port = new ReceivePort();
-
+    
     // Notify any other isolates what port this isolate listens to.
     sendPort.send(port.sendPort);
-
+    
     await for (var msg in port) {
       String data = msg[0];
       SendPort replyTo = msg[1];
-
+    
       String dataURL = data;
       http.Response response = await http.get(dataURL);
       // Lots of JSON to parse
@@ -839,7 +839,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     if (widgets.length == 0) {
       return true;
     }
-
+    
     return false;
   }
 
@@ -905,7 +905,7 @@ Then you would need to declare these images in your pubspec.yaml file
 assets:
  - images/a_dot_burr.jpeg
  - images/a_dot_ham.jpeg
-{% endprettify %}
+  {% endprettify %}
 
 You can then access your images using AssetImage
 
@@ -969,13 +969,13 @@ observer and listening to the didChangeAppLifecycleState change event.
 The lifecycle events you can observe are 
 
 - resumed - The application is visible and responding to user input. This is 
-onResume from Android
+  onResume from Android
 - inactive - The application is in an inactive state and is not receiving user 
-input. This event is unused on Android and only works with iOS.
+  input. This event is unused on Android and only works with iOS.
 - paused - The application is not currently visible to the user, not responding 
-to user input, and running in the background. This is onPause from Android
+  to user input, and running in the background. This is onPause from Android
 - suspending - The application will be suspended momentarily. This is unused on 
-iOS
+  iOS
 
 
 
@@ -1132,11 +1132,11 @@ Typically you would want to add event listeners to your widgets, such as a
 button or image. In Flutter there are two easy ways of doing this.
 
 1. If the Widget has support for event detection you can just pass in a 
-function to it and handle it. For example, the RaisedButton has an onPressed 
-parameter
+  function to it and handle it. For example, the RaisedButton has an onPressed 
+  parameter
 
    <!-- skip -->
-{% prettify dart %}
+  {% prettify dart %}
    @override
    Widget build(BuildContext context) {
      return new RaisedButton(onPressed: () {
@@ -1146,10 +1146,10 @@ parameter
    {% endprettify %}
 
 2. If the Widget does not have support for event detection, you can wrap up the 
-widget in a GestureDetector and pass in a function to the onTap parameter.
+  widget in a GestureDetector and pass in a function to the onTap parameter.
 
    <!-- skip -->
-{% prettify dart %}
+  {% prettify dart %}
      @override
      Widget build(BuildContext context) {
        return new Scaffold(
@@ -1174,42 +1174,42 @@ Using the GuestureDetector we can listen to a wide range of Gestures such as
 - Tap
 
   - `onTapDown` A pointer that might cause a tap has contacted the screen at a 
-particular location.
+    particular location.
   - `onTapUp` A pointer that will trigger a tap has stopped contacting the 
-screen at a particular location.
+    screen at a particular location.
   - `onTap` A tap has occurred.
   - `onTapCancel` The pointer that previously triggered the `onTapDown` will 
-not end up causing a tap.
+    not end up causing a tap.
 
 - Double tap
 
   - `onDoubleTap` The user has tapped the screen at the same location twice in 
-quick succession.
+    quick succession.
 
 - Long press
 
   - `onLongPress` A pointer has remained in contact with the screen at the same 
-location for a long period of time.
+    location for a long period of time.
 
 - Vertical drag
 
   - `onVerticalDragStart` A pointer has contacted the screen and might begin to 
-move vertically.
+    move vertically.
   - `onVerticalDragUpdate` A pointer that is in contact with the screen and 
-moving vertically has moved in the vertical direction.
+    moving vertically has moved in the vertical direction.
   - `onVerticalDragEnd` A pointer that was previously in contact with the 
-screen and moving vertically is no longer in contact with the screen and was 
-moving at a specific velocity when it stopped contacting the screen.
+    screen and moving vertically is no longer in contact with the screen and was 
+    moving at a specific velocity when it stopped contacting the screen.
 
 - Horizontal drag
 
   - `onHorizontalDragStart` A pointer has contacted the screen and might begin 
-to move horizontally.
+    to move horizontally.
   - `onHorizontalDragUpdate` A pointer that is in contact with the screen and 
-moving horizontally has moved in the horizontal direction.
+    moving horizontally has moved in the horizontal direction.
   - `onHorizontalDragEnd` A pointer that was previously in contact with the 
-screen and moving horizontally is no longer in contact with the screen and was 
-moving at a specific velocity when it stopped contacting the screen.
+    screen and moving horizontally is no longer in contact with the screen and was 
+    moving at a specific velocity when it stopped contacting the screen.
 
 
 
@@ -1243,7 +1243,7 @@ Widget build(BuildContext context) {
         }else{
           controller.forward();
         }
-
+    
       },
     ),
   ));
@@ -1558,7 +1558,7 @@ fonts:
      fonts:
        - asset: fonts/MyCustomFont.ttf
        - style: italic
-{% endprettify %}
+       {% endprettify %}
 
 and lasty you would assign the font to your Text widget
 
@@ -1691,9 +1691,9 @@ class _SampleAppPageState extends State<SampleAppPage> {
   bool isEmail(String em) {
     String p =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-
+    
     RegExp regExp = new RegExp(p);
-
+    
     return regExp.hasMatch(em);
   }
 }
@@ -1704,11 +1704,37 @@ class _SampleAppPageState extends State<SampleAppPage> {
 
 **How do I access the GPS sensor?**
 
+Flutter does not access the GPS sensor directly, instead it relies on Plugins. 
+
+To access the GPS sensor you can build your own plugin [Flutter Plugin how to] 
+or use a community plugin https://pub.dartlang.org/packages/location
+
 **How do I access the Camera?**
+
+A popular community plugin to access the camera is 
+https://pub.dartlang.org/packages/image_picker
 
 **How do I log in with Facebook**
 
+To access Facebook Connect functionality you can use 
+https://pub.dartlang.org/packages/flutter_facebook_connect
+
 **How do I build my own custom native integrations?**
+
+If there is platform specific functionality that Flutter or its community 
+Plugins are missing then you can build your own following this tutorial 
+https://flutter.io/developing-packages/ .
+
+Flutters plugin architecture in a nutshell is a lot like using an Event bus in 
+Android, you fire off a message and let the receiver process and emit a result 
+back to you, in this case the receiver would be iOS or Android.
+
+**How do I use the NDK in my Flutter application**
+
+If you are using the NDK in your current application and want to take advatnage 
+of your native libraries in Flutter, then you can build a custom plugin that 
+hooks into Android, which then talks to the NDK, returns the result to Android, 
+which then propagates the result back up to Flutter.
 
 # Themes
 
