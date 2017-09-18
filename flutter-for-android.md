@@ -863,9 +863,61 @@ Since Widgets are nested in Flutter, you can consider the top level parent widge
 
 **How do I listen to Android Activity lifecycle events?**
 
-You can easily listen to lifecycle events by hooking into the WidgetsBinding observer and listening to the didChangeAppLifecycleState change event.
+You can easily listen to lifecycle events by hooking into the WidgetsBinding observer and listening to the didChangeAppLifecycleState change event. 
 
-[code]
+The lifecycle events you can observe are 
+
+- resumed - The application is visible and responding to user input. This is onResume from Android
+- inactive - The application is in an inactive state and is not receiving user input. This event is unused on Android and only works with iOS.
+- paused - The application is not currently visible to the user, not responding to user input, and running in the background. This is onPause from Android
+- suspending - The application will be suspended momentarily. This is unused on iOS
+
+
+
+<!-- skip -->
+{% prettify dart %}
+import 'package:flutter/widgets.dart';
+
+class LifecycleWatcher extends StatefulWidget {
+  @override
+  _LifecycleWatcherState createState() => new _LifecycleWatcherState();
+}
+
+class _LifecycleWatcherState extends State<LifecycleWatcher> with WidgetsBindingObserver {
+  AppLifecycleState _lastLifecyleState;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      _lastLifecyleState = state;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_lastLifecyleState == null)
+      return new Text('This widget has not observed any lifecycle changes.', textDirection: TextDirection.ltr);
+    return new Text('The most recent lifecycle state this widget observed was: $_lastLifecyleState.',
+        textDirection: TextDirection.ltr);
+  }
+}
+
+void main() {
+  runApp(new Center(child: new LifecycleWatcher()));
+}
+{% endprettify %}
 
 # Layouts
 
@@ -873,9 +925,49 @@ You can easily listen to lifecycle events by hooking into the WidgetsBinding obs
 
 A LinearLayout is commonly used to lay your widgets out linearly horizontally or vertically. In Flutter, you can use the Row widget or Column widget to achieve the same result.
 
-[Example of Row]
+If you notice the two code samples are identical with the exception of the "Row" and "Column" widget. The children are the same and this feature can be exploited to develop rich layouts that can change overtime with the same children.
 
-[Example of Column]
+<!-- skip -->
+{% prettify dart %}
+new Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: <Widget>[
+    new Text(
+      'Row One',
+    ),
+    new Text(
+      'Row Two',
+    ),
+    new Text(
+      'Row Three',
+    ),
+    new Text(
+      'Row Four',
+    ),
+  ],
+)
+{% endprettify %}
+
+<!-- skip -->
+{% prettify dart %}
+new Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: <Widget>[
+    new Text(
+      'Column One',
+    ),
+    new Text(
+      'Column Two',
+    ),
+    new Text(
+      'Column Three',
+    ),
+    new Text(
+      'Column Four',
+    ),
+  ],
+)
+{% endprettify %}
 
 **What is the equivalent of a RelativeLayout?**
 
@@ -895,7 +987,25 @@ A ScrollView lets you lay your widgets such that if the users' device has a smal
 
 In Flutter the easiest way to do this is using the ListView widget. This might seem like overkill coming from Android, but in Flutter a ListView widget is both a ScrollView and an Android ListView.
 
-[code]
+<!-- skip -->
+{% prettify dart %}
+new ListView(
+  children: <Widget>[
+    new Text(
+      'Row One',
+    ),
+    new Text(
+      'Row Two',
+    ),
+    new Text(
+      'Row Three',
+    ),
+    new Text(
+      'Row Four',
+    ),
+  ],
+)
+{% endprettify %}
 
 # Gesture Detection and Touch Event Handling
 
@@ -1438,15 +1548,28 @@ class _SampleAppPageState extends State<SampleAppPage> {
 
 **How do I theme my app?**
 
-Flutter out of the box comes with a precise implementation of Material Design, which takes care of a lot of styling and theming needs that you would typically do.
+Flutter out of the box comes with a precise implementation of Material Design, which takes care of a lot of styling and theming needs that you would typically do. Unlike Android where you declare themes in XML and then assign it to your application via AndroidManifest.xml, in Flutter you declare themes via the top level widget.
 
-To take full advantage of MaterialDesign in your app, you can declare a top level widget `MaterialApp` as the entry point to your application. This is where you would declare routing and navigation as well
+To take full advantage of MaterialDesign in your app, you can declare a top level widget `MaterialApp` as the entry point to your application. 
 
-[code]
+To customize the colors and styles of Material Design you can pass in a ThemeData object to the MaterialApp widget, for example in the code below you can see the primary swatch is set to blue and all text selection color should be red.
 
-To customize the colors and styles of Material Design you can pass in a ThemeData object to the MaterialApp widget
-
-
+<!-- skip -->
+{% prettify dart %}
+class SampleApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'Sample App',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+        textSelectionColor: Colors.red
+      ),
+      home: new SampleAppPage(),
+    );
+  }
+}
+{% endprettify %}
 
 # Common Widget Map
 
