@@ -414,6 +414,28 @@ Lastly, in Flutter you can receive this via
 
 [code]
 
+
+
+**What is the equivilent of startActivityForResult?**
+
+The Navigator class which handles all Routing in Flutter can be used to get a 
+result back from a route that you have pushed on the stack. This can be done by 
+await'ing on the Future returned by push. For example if you were to start a 
+location route which let the user select their location, you could do 
+
+<!-- skip -->
+{% prettify dart %}
+Map coordinates = await Navigator.of(context).pushNamed('/location');
+{% endprettify %}
+
+then inside your location route once the user has selected their location you 
+can simply "pop" the stack with the result
+
+<!-- skip -->
+{% prettify dart %}
+Navigator.of(context).pop({"lat":43.821757,"long":-79.226392});
+{% endprettify %}
+
 # Async UI
 
 **What is the equivalent of runOnUiThread in Flutter?**
@@ -905,7 +927,7 @@ Then you would need to declare these images in your pubspec.yaml file
 assets:
  - images/a_dot_burr.jpeg
  - images/a_dot_ham.jpeg
-  {% endprettify %}
+     {% endprettify %}
 
 You can then access your images using AssetImage
 
@@ -1558,7 +1580,7 @@ fonts:
      fonts:
        - asset: fonts/MyCustomFont.ttf
        - style: italic
-       {% endprettify %}
+           {% endprettify %}
 
 and lasty you would assign the font to your Text widget
 
