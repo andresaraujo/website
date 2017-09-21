@@ -63,7 +63,7 @@ new Text(
 As you can see, the Text Widget has no state information associated with it, it 
 renders what is passed in it's constructors and nothing more. 
 
-However, what if you want to make "I Like Flutter" change dynamically, for 
+But, what if you want to make "I Like Flutter" change dynamically, for 
 example from clicking a FloatingActionButton?
 
 This can be acheived by wrapping the Text widget in a StatefulWidget and 
@@ -130,7 +130,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
 
 **How do I layout my Widgets? Where is my XML layout file?**
 
-In Android, you write layouts via XML, however in Flutter you write your 
+In Android, you write layouts via XML, but in Flutter you write your 
 layouts with a widget tree. 
 
 Here is an example of how you would display a simple Widget on the screen and 
@@ -160,7 +160,7 @@ Widget build(BuildContext context) {
 
 In Android, you would call addChild or removeChild from a parent to dynamically 
 add or remove views from a parent. In Flutter, because widgets are immutable 
-there is no addChild, instead, you can simply pass in a function that returns a 
+there is no addChild, instead, you can pass in a function that returns a 
 widget to the parent and control that child's creation via a boolean.
 
 For example here is how you can toggle between two widgets when you click on a 
@@ -233,12 +233,12 @@ class _SampleAppPageState extends State<SampleAppPage> {
 
 
 **In Android, I can Animate a view by View.animate(), how can I do that to a Widget?**
-In Flutter, animating widgets can be done easily via the animation library.
+In Flutter, animating widgets can be done via the animation library.
 
 In Android you would either create animations via XML or call the .animate() 
-property on Views, in Flutter you can just wrap widgets inside an Animation.
+property on Views, in Flutter you can wrap widgets inside an Animation.
 
-Similar to Android, in Flutter you have an AnimationController and a 
+Like Android, in Flutter you have an AnimationController and a 
 Interpolator which is an extension of the Animation class, for example a 
 CurvedAnimation. You pass the controller and Animation into an AnimationWidget 
 and tell the controller to start the animation.
@@ -354,18 +354,18 @@ Widget build(BuildContext context) {
 
 **What is the equivalent of an Intent in Flutter?**
 
-Flutter does not have the concept of Intents. However in Android, there are two 
+Flutter does not have the concept of Intents. In Android, there are two 
 main use-cases for Intents, One is to switch between Activities and another is 
 to invoke external(or internal) components of your app (Camera, Services etc).
 
-To switch between screens in Flutter you can directly access the router to draw 
-a new Widget.  There are two core concepts and classes for managing multiple 
+To switch between screens in Flutter you can access the router to draw 
+a new Widget.  There are two core concepts and classes for managing many 
 screens: Route and Navigator. A Route is an abstraction for a “screen” or 
 “page” of an app (think Activity), and a Navigator is a widget that manages 
 routes. A Navigator can push and pop routes to help a user move from screen to 
 screen.
 
-Similar to Android where you can declare your Activities inside the 
+Like Android where you can declare your Activities inside the 
 AndroidManifest.xml, in Flutter you can pass in a Map of named routes to the 
 top level MaterialApp instance
 
@@ -416,7 +416,7 @@ Lastly, in Flutter you can receive this via
 
 
 
-**What is the equivilent of startActivityForResult?**
+**What is the equivalent of startActivityForResult?**
 
 The Navigator class which handles all Routing in Flutter can be used to get a 
 result back from a route that you have pushed on the stack. This can be done by 
@@ -429,7 +429,7 @@ Map coordinates = await Navigator.of(context).pushNamed('/location');
 {% endprettify %}
 
 then inside your location route once the user has selected their location you 
-can simply "pop" the stack with the result
+can "pop" the stack with the result
 
 <!-- skip -->
 {% prettify dart %}
@@ -461,7 +461,7 @@ loadData() async {
 To update the UI you would call setState which would trigger the build method 
 to run again and update the data.
 
-Here is the full example of loading data asyncrounsly and displaying it in a 
+Here is the full example of loading data asynchronously and displaying it in a 
 ListView.
 
 <!-- skip -->
@@ -536,9 +536,9 @@ class _SampleAppPageState extends State<SampleAppPage> {
 
 **What is the equivalent of an AsyncTask or IntentService on Android?**
 
-In many cases, you do not have to worry about threading in Flutter as long as 
+Often, you do not have to worry about threading in Flutter as long as 
 you follow the async/await patterns. This is because Flutter has a 
-single-threaded event loop (similar to Node.js).
+single-threaded event loop (like Node.js).
 
 To run code asynchronously you can declare the function as an async function 
 and await on long running tasks in the function
@@ -553,21 +553,20 @@ loadData() async {
   });
 }
 {% endprettify %}
-
-This is how you would typically do network or database calls. 
+This is how you would do network or database calls. 
 
 With regards to AsyncTask which follows a three step model onPreExecute, 
 doInBackground and onPostExecute, doing a similar model in Flutter is easier. 
-You can just write non-blocking code as it is, like you would in onPreExecute 
+You can write non-blocking code as it is, like you would in onPreExecute 
 and onPostExecute and to run code asynchronously you would call an async 
 function.
 
-onPostExecute typically takes the value from the result of the doInBackground 
-task and updates the UI, in Flutter as you can see above you would just take 
+onPostExecute takes the value from the result of the doInBackground 
+task and updates the UI, in Flutter as you can see above you would take 
 the value returned from the await’ed function and update the UI by calling 
 setState.
 
-However, there are times where you may be processing a large amount of data and 
+Yet, there are times where you may be processing a large amount of data and 
 your UI could hang. 
 
 To get around this you can run code in the background. See <u>*How do I run 
@@ -580,13 +579,13 @@ thread?*</u>
 **How do I run parallel code on multi-core devices? I.e AsyncTask.execute(AsyncTask.THREAD_POOL_EXECUTOR) or run code in a background thread?**
 
 Since Flutter uses a single threaded execution model, the code you write 
-normally executes on a single core on the mobile device. 
+executes on a single core on the mobile device. 
 
 However, it is possible to take advantage of multiple CPU cores to do long 
 running or computationally intensive tasks. This is done by using Isolates.
 
 Isolates are a separate execution thread that runs and do not share any memory 
-with the main execution thread. This means you can’t just access variables from 
+with the main execution thread. This means you can’t access variables from 
 the main thread or update your UI by calling setState. 
 
 Let's see an example of a simple Isolate and how you can communicate and share 
@@ -811,7 +810,7 @@ Before you call your long running task, you can show a Indicator to let the
 user know there is processing happening. This can be done by rendering a 
 Progress Indicator widget. You can show the Progress Indicator programmatically 
 by controlling when its rendered through a boolean and telling Flutter to 
-update it's state just before your long running task.
+update it's state before your long running task.
 
 In the example below, we break up the build function into three different 
 functions. If showLoadingDialog is true (when widgets.length == 0) then we 
@@ -938,7 +937,7 @@ return new AssetImage("images/a_dot_burr.jpeg");
 
 **Where do I store strings? How do I store different locales**
 
-Currently, best practice is to create a class called Strings, for example
+At the moment, best practice is to create a class called Strings, for example
 
 <!-- skip -->
 {% prettify dart %}
@@ -1050,7 +1049,7 @@ void main() {
 
 **What is the equivalent of a LinearLayout?**
 
-A LinearLayout is commonly used to lay your widgets out linearly horizontally 
+A LinearLayout is used to lay your widgets out linearly -horizontally 
 or vertically. In Flutter, you can use the Row widget or Column widget to 
 achieve the same result.
 
@@ -1191,7 +1190,7 @@ button or image. In Flutter there are two easy ways of doing this.
 
 **How do I handle other gestures on widgets?**
 
-Using the GuestureDetector we can listen to a wide range of Gestures such as
+Using the GestureDetector we can listen to a wide range of Gestures such as
 
 - Tap
 
@@ -1235,7 +1234,7 @@ Using the GuestureDetector we can listen to a wide range of Gestures such as
 
 
 
-For example here is a GuesterDetector for double tap on the FlutterLogo that 
+For example here is a GestureDetector for double tap on the FlutterLogo that 
 will make it rotate
 
 <!-- skip -->
@@ -1281,10 +1280,10 @@ The equivalent to a ListView in Flutter is … a ListView!
 Though the differences are great, the end result is the same. In an Android 
 ListView, you create an adapter that you can then pass into the ListView which 
 will render each row with what your adapter returns. However you have to make 
-sure you recycle your rows properly, otherwise, you get all sorts of crazy 
+sure you recycle your rows , otherwise, you get all sorts of crazy 
 visual glitches and memory issues.
 
-In Flutter, due to Flutters immutable widget pattern, you simply pass in a List 
+In Flutter, due to Flutters immutable widget pattern, you pass in a List 
 of Widgets to your ListView and Flutter will take care of making sure they are 
 scrolling fast and smooth.
 
@@ -1413,7 +1412,7 @@ and nothing has changed, hence no update to the data.
 
 The quick and dirty way around this is to assign your list variable a new 
 List() inside of setState, copy over all the old data to the new list. This is 
-inefficient a simple dirty way to acheive an update. 
+inefficient a simple dirty way to achieve an update. 
 
 <!-- skip -->
 {% prettify dart %}
@@ -1551,7 +1550,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
 {% endprettify %}
 
 Instead of creating a "new ListView" we create a new ListView.builder which 
-takes two key paramters, the initial length of the list and an Itembuilder 
+takes two key parameters, the initial length of the list and an ItemBuilder 
 function.
 
 The ItemBuilder function is a lot like the getView function in an Android 
@@ -1582,7 +1581,7 @@ fonts:
        - style: italic
            {% endprettify %}
 
-and lasty you would assign the font to your Text widget
+and lastly you would assign the font to your Text widget
 
 <!-- skip -->
 {% prettify dart %}
@@ -1608,7 +1607,7 @@ Along with customizing fonts you can customize a lot of different styles on a
 Text widget.
 
 The style parameter of a Text widget takes a TextStyle object, where you can 
-customize many paramters such as
+customize many parameters such as
 
 - color
 - decoration
@@ -1792,7 +1791,3 @@ class SampleApp extends StatelessWidget {
   }
 }
 {% endprettify %}
-
-# Common Widget Map
-
-
