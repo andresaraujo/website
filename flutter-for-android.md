@@ -312,6 +312,58 @@ class _MyFadeTest extends State<MyFadeTest> with TickerProviderStateMixin {
 
  See https://flutter.io/widgets/animation/ and https://flutter.io/tutorials/animation for more specific details.
 
+**How do I use a Canvas to draw/paint?**
+Flutter has two classes that will help you draw to the canvas, the CustomPaint
+and CustomPainter which implements your algorithm to draw to canvas.
+
+In this popular StackOverFlow.com answer you can see how
+a signature painter is implemented.
+
+See https://stackoverflow.com/questions/46241071/create-signature-area-for-mobile-app-in-dart-flutter
+
+<!-- skip -->
+{% prettify dart %}
+import 'package:flutter/material.dart';
+class SignaturePainter extends CustomPainter {
+  SignaturePainter(this.points);
+  final List<Offset> points;
+  void paint(Canvas canvas, Size size) {
+    Paint paint = new Paint()
+      ..color = Colors.black
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 5.0;
+    for (int i = 0; i < points.length - 1; i++) {
+      if (points[i] != null && points[i + 1] != null)
+        canvas.drawLine(points[i], points[i + 1], paint);
+    }
+  }
+  bool shouldRepaint(SignaturePainter other) => other.points != points;
+}
+class Signature extends StatefulWidget {
+  SignatureState createState() => new SignatureState();
+}
+class SignatureState extends State<Signature> {
+  List<Offset> _points = <Offset>[];
+  Widget build(BuildContext context) {
+    return new GestureDetector(
+      onPanUpdate: (DragUpdateDetails details) {
+        setState(() {
+          RenderBox referenceBox = context.findRenderObject();
+          Offset localPosition =
+          referenceBox.globalToLocal(details.globalPosition);
+          _points = new List.from(_points)..add(localPosition);
+        });
+      },
+      onPanEnd: (DragEndDetails details) => _points.add(null),
+      child: new CustomPaint(painter: new SignaturePainter(_points)),
+    );
+  }
+}
+class DemoApp extends StatelessWidget {
+  Widget build(BuildContext context) => new Scaffold(body: new Signature());
+}
+void main() => runApp(new MaterialApp(home: new DemoApp()));
+{% endprettify %}
 
 
 **How do I build custom Widgets?**
